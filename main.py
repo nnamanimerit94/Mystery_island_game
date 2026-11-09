@@ -1,4 +1,4 @@
-from game import get_player_name, get_choice, display_location, display_menu, locations
+from game import get_player_name, get_choice, display_location, display_menu, pick_up_item, move_player, locations
 
 def display_title_and_instruction():
     print("="*50)
@@ -36,9 +36,10 @@ def main():
 
         display_menu(player)
 
-        current_exits = locations[player['location']]['exits']
+        exits = locations[player['location']]['exits']
+        items = locations[player['location']]['items']
 
-        direction_map = get_choice(current_exits)
+        choice_map = get_choice(exits, items)
 
         choice = input("\nEnter your choice: ")
 
@@ -46,41 +47,27 @@ def main():
             print(f"Goodbye! {player_name}")
             break
 
-        inventory = str(len(current_exits)+1)
+        inventory = str(len(items)+len(exits)+1)
         if choice == inventory:
             if len(player['Inventory']) == 0:
                 print("\nInventory: is empty")
                 print("You havent collected an item yet")
                 continue
             else:
-                print(f"\nInventory: {'(, )'.join(player['Inventory'])}")
+                print(f"\nInventory: {', '.join(player['Inventory'])}")
                 continue
 
 
-        if choice in direction_map:
-            direction = direction_map[choice]
+        if choice in choice_map:
+            choice_type, choice_value = choice_map[choice]
 
-            if direction in current_exits:
-                new_location = current_exits[direction]
-                if new_location in ("Beach", "Jungle", "Cave"):
-                    
-                player['location'] = new_location
-                print(f"You travel {direction} to {current_exits[direction]}")
-                continue
+            if choice_type == 'item':
+                pick_up_item(player, choice_value)
 
-            elif direction in
-                
+            elif choice_type == 'direction':
+                move_player(player, choice_value)
         else:
             print("Invalid choice please select the right options")
-            
-            
-
-
-
-
-
-        
-
 
        
 if __name__ == "__main__":
