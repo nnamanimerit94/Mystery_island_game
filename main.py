@@ -7,7 +7,7 @@ def display_title_and_instruction():
     print("""
 You wake up on Mystery Island after a storm. 
 The lighthouse is dark, the bridge is locked,
-you lose energy when you change location,
+You lose energy when you change location,
 and a rescue boat will arrive only if you restore the light in the beacon.
     """)
 
@@ -32,6 +32,11 @@ def main():
 
         print(f"\nWelcome to the land of Adventure {player_name}!")
 
+        if player["Energy"] == 0:
+            player['game_over'] = True
+            print("Game over!!!")
+            break
+
         display_location(player)
 
         display_menu(player)
@@ -49,12 +54,17 @@ def main():
 
         inventory = str(len(items)+len(exits)+1)
         if choice == inventory:
+            print('')
+            print("-"*20)
             if len(player['Inventory']) == 0:
-                print("\nInventory: is empty")
+                print("Inventory: is empty")
                 print("You havent collected an item yet")
+                print("-"*20)
+
                 continue
             else:
-                print(f"\nInventory: {', '.join(player['Inventory'])}")
+                print(f"Inventory: {', '.join(player['Inventory'])}")
+                print("-"*40)
                 continue
 
 

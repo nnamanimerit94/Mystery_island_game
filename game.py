@@ -13,7 +13,7 @@ Its beacon is not lit.
         "exits": {
             "north": "Jungle"
         },
-        "items": []
+        "items": [],
     },
 
     "Jungle": {
@@ -40,7 +40,7 @@ an old, rickety bridge spanning a deep gorge.
         """,
         'exits': {
             'west': 'Jungle',
-            'east': 'Old Bridge'
+            'east': 'Old_bridge'
         },
         "items": ["lantern"]
     },
@@ -70,7 +70,7 @@ Through the windows, you can see the ocean. A rescue
 boat is visible in the distance, waiting for the signal.
         """,
         'exits': {
-            'west': 'Old Bridge'
+            'west': 'Old_bridge'
         },
         "items": []
     }
@@ -83,21 +83,28 @@ def display_location(player):
     current_location = player['location']
     location_data = locations[current_location]
     items = location_data['items']
+    energy = player['Energy']
 
 
     print("\n Current_Location:", current_location)
     print("-"*50)
     print(location_data['description'])
+    print(f"Energy level: {energy}")
+
     if items:
-        for item in items:
-            print(f"You have {item} to pick up")
+        if len(player['Inventory'])<2:
+            for item in items:
+                print(f"\nYou have {item} to pick up")
 
 def display_menu(player):
     current_location = player['location']
     exits = locations[current_location]['exits']
     items = locations[current_location]['items']
+    energy = player['Energy']
 
-    print("\nWhat would you like to do")
+    print("\nWhat would you like to do?")
+    print(f"Your energy level is remaining: {energy}")
+    print("\n")
 
     move_number = 1
 
@@ -130,17 +137,20 @@ def get_choice(exits, items):
 def move_player(player, choice_value):
     current_location = player['location']
     exits = locations[current_location]['exits']
+    energy = player['Energy']
     if choice_value in exits:
-        if choice_value == 'Old_bridge' and 'rope' not in player['Inventory']:
-            print(f"Cannot go to {choice_value} without 'Rope'")
+        destination = exits[choice_value]
+        if destination == 'Old_bridge' and 'rope' not in player['Inventory']:
+            print(f"Cannot go to {destination} without 'Rope'")
             return False
-        elif choice_value == 'Lighthouse' and 'lantern' not in player['Inventory']:
-            print(f"Cannot go to {choice_value} without collecting Lantern")
+        elif destination == 'Lighthouse' and 'lantern' not in player['Inventory']:
+            print(f"Cannot go to {destination} without collecting Lantern")
             return False
         else:
-            new_location = exits[choice_value]
-            player['location'] = new_location
-            print(f"\nYou have travelled {choice_value} to {new_location}")
+            player['location'] = destination
+            player['Energy']-=1
+            print(f"\nYou have travelled {choice_value} to {destination}")
+            print(f"\nEnergy: {player['Energy']}")
             return True
     else:
         print(f"\nYou can not go {choice_value} from here")
